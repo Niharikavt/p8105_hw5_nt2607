@@ -26,6 +26,8 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+set.seed(1)
 ```
 
 ## Problem 1 
@@ -189,7 +191,40 @@ sim_results %>%
 plot2
 ```
 
-As effect size increases power also increases and the platues after a point. 
+As effect size increases power also increases and then plateaus after a point. 
+
+### Part 3 
+
+Filter to only those values when h0 was rejected. 
+
+```{r graph 3}
+sim_results2 = sim_results %>% 
+  filter(p.value < 0.05) %>% 
+  group_by(mu) %>% 
+  summarize(
+    mean_mu = mean(estimate)
+  ) 
+Plot3 = (
+  sim_results %>% 
+  group_by(mu) %>% 
+  summarize(
+    mean_mu = mean(estimate)) %>% 
+  ggplot(aes(y = mean_mu, x = mu)) + 
+    geom_line() + 
+    geom_point() +
+    geom_line(data = sim_results2, color = "green") +
+    geom_point(data = sim_results2, color = "green") +
+    labs(
+    title = "estimate mean vs true mean",
+    x = "true population mean",
+    y = "estimate mean"
+  ))
+Plot3
+```
+
+The lines don't overlap thus are different from one another.
+
+
 
 
 
