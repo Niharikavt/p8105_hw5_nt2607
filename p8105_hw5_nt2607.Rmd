@@ -4,16 +4,18 @@ output: github_document
 date: "2022-11-16"
 ---
 
-```{r setup, include = FALSE}
+```{r setup, include=FALSE}
 library(tidyverse)
+library(p8105.datasets)
+library(viridis)
 
 knitr::opts_chunk$set(
-  fig.width = 6,
-  fig.asp = 0.6,
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
   out.width = "90%"
 )
-
-theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
 options(
   ggplot2.continuous.colour = "viridis",
@@ -23,10 +25,24 @@ options(
 scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 
-set.seed(1)
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
 
 ## Problem 1 
-Read in the data 
+```{r load_libraries}
+library(tidyverse)
+```
+
+## Problem 1
+
+Importing the data in individual spreadsheets contained in `./data/zip_data/`. To do this, I create a dataframe that includes the list of all files in that directory and the complete path to each file. As a next step, I `map` over paths and import data using the `read_csv` function. Finally, I `unnest` the result of `map`.
 
 ```{r}
+full_df = 
+  tibble(
+    files = list.files("data/zip_data/"),
+    path = str_c("data/zip_data/", files)
+  )
+```
+
+
