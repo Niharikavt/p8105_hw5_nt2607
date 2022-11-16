@@ -140,9 +140,56 @@ results_df %>%
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
 
-s
+## Problem 3 
 
+### Part 1 
 
+For each dataset, save μ̂  and the p-value arising from a test of H:μ=0 using α=0.05. 
+
+```{r}
+sim_mean = function(mu, n=30, sigma = 5) {
+  
+  sim_data = tibble(
+    x = rnorm(n = n, mean = mu, sd = sigma)
+  )
+  
+  sim_data %>%
+  t.test() %>%
+  broom::tidy()
+}
+sim_results = 
+  tibble(mu = c(0, 1, 2, 3, 4, 5, 6)) %>% 
+  mutate(
+    output_lists = map(.x = mu, ~rerun(5000, sim_mean(.x))),
+    estimate_dfs = map(output_lists, bind_rows)) %>% 
+  select(-output_lists) %>% 
+  unnest(estimate_dfs) %>% 
+  select(mu, estimate, p.value)
+```
+
+### Part 2 
+
+```{r graph 2 }
+plot2 = (
+sim_results %>%
+  group_by(mu) %>% 
+  summarize(
+    total = n(), 
+    null_rejected = sum(p.value < 0.05), 
+    proportion = null_rejected/total
+  ) %>% 
+  ggplot(aes(x = mu, y = proportion)) + 
+  geom_point() + 
+  geom_smooth(se = F) + 
+  labs(
+    title = "Power vs mean",
+    x = "true value",
+    y = "proportion of times null was rejected"
+  ))
+plot2
+```
+
+As effect size increases power also increases and the platues after a point. 
 
 
 
